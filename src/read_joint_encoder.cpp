@@ -3,6 +3,8 @@
 ***********************************************************************
 * file read_joint_encoder.cpp
 * Thro Pro Joint 8 bit Encoder driver , IC: FT245RL FIFO mode
+* Encoder http://www.encoder.com/literature/datasheet-960.pdf
+* 8 bit Graycode P/N 960-T-05-G-8-PP-FA-G/4-N
 * using libftdi1 library
 * install udev file to /etc/udev/rules.d/99-libftdi_encoder.rules
 * author Cheng-Lung Lee. University of Detroit Mercy
@@ -50,7 +52,13 @@ int main(int argc, char **argv)
     n.param("fifo_pid", fifo_pid, 0x6999);
     n.param("ROS_loop_rate_Hz", ROS_loop_rate_Hz, 20.0);
 
- /*   n.param<std::string>("parent_link", parent_link_str, "base_link");
+ /*
+   TODO : set up jointstate publisher , joint_states (sensor_msgs/JointState) 
+   reference:http://wiki.ros.org/joint_state_publisher
+   example code :https://github.com/ros/robot_model/blob/indigo-devel/joint_state_publisher/joint_state_publisher/joint_state_publisher
+*/
+/*
+    n.param<std::string>("parent_link", parent_link_str, "base_link");
     n.param<std::string>("child_link",  child_link_str , "rear_link");
     n.param<std::string>("joint_name",  joint_name_str , "thor_joint");
 */
