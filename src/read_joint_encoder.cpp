@@ -27,9 +27,9 @@ uint8_t GrayDecode(uint8_t gray);
 
 int fifo_vid;
 int fifo_pid;
-char parent_link_str[128];
-char child_link_str[128];
-char joint_name_str[128];
+std::string parent_link_str;
+std::string child_link_str;
+std::string joint_name_str;
 double ROS_loop_rate_Hz;
 
 
@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "ThorPro_joint_encoder");
     
     ros::NodeHandle n("~");
-    ros::Publisher joint_pub = n.advertise<sensor_msgs::JointState>("joint_states", 1);
+    ros::Publisher joint_pub = n.advertise<sensor_msgs::JointState>("/joint_states", 1);
 /*
     tf::TransformBroadcaster broadcaster;
 */
@@ -70,7 +70,6 @@ int main(int argc, char **argv)
     n.param<std::string>("joint_name",  joint_name_str , "thor_joint");
 */
 
-    const double degree = M_PI/180;
 
 
     // message declarations
@@ -119,11 +118,11 @@ int main(int argc, char **argv)
         }
         else
         {
-            ROS_INFO("FIFO read data: 0x%02hhx \n",buf[0]);
+            //ROS_INFO("FIFO read data: 0x%02hhx \n",buf[0]);
             joint_position=GrayDecode(buf[0]) ;
             joint_angle_rad=angle_Scale*joint_position+angle_Offset;
-            ROS_INFO("FIFO joint position: %8.3f rad \n",joint_angle_rad);
-            ROS_INFO("FIFO joint position: %8.3f degree\n",joint_angle_rad/degree);
+            //ROS_INFO("FIFO joint position: %8.3f rad \n",joint_angle_rad);
+            //ROS_INFO("FIFO joint position: %8.3f degree\n",joint_angle_rad/degree);
         }
     //
 
