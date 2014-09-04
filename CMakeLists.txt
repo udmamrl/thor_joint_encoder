@@ -14,6 +14,9 @@ find_package(catkin REQUIRED COMPONENTS
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
+# pkg-config support
+find_package(PkgConfig)
+pkg_search_module(libftdi1 REQUIRED libftdi1)
 
 ## Uncomment this if the package has a setup.py. This macro ensures
 ## modules and global scripts declared therein get installed
@@ -104,16 +107,20 @@ include_directories(
 # )
 
 ## Declare a cpp executable
-# add_executable(thor_joint_encoder_node src/thor_joint_encoder_node.cpp)
+add_executable(fifo_read src/fifo_read.c)
+add_executable(read_joint_encoder src/read_joint_encoder.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(thor_joint_encoder_node thor_joint_encoder_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(thor_joint_encoder_node
-#   ${catkin_LIBRARIES}
-# )
+ target_link_libraries(fifo_read
+   ${catkin_LIBRARIES} ftdi1
+ )
+ target_link_libraries(read_joint_encoder
+   ${catkin_LIBRARIES} ftdi1
+ )
 
 #############
 ## Install ##

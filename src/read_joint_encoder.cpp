@@ -1,9 +1,10 @@
 /* This program is distributed under the GPL, version 2 */
 /*!
 ***********************************************************************
-* file ros_joint_encoder_read.cpp
+* file read_joint_encoder.cpp
 * Thro Pro Joint 8 bit Encoder driver , IC: FT245RL FIFO mode
 * using libftdi1 library
+* install udev file to /etc/udev/rules.d/99-libftdi_encoder.rules
 * author Cheng-Lung Lee. University of Detroit Mercy
 * Advanced mobile Robotics Lab
 * date 2013/09/04
@@ -46,7 +47,7 @@ int main(int argc, char **argv)
     ros::NodeHandle n("~");
     // read parameters
     n.param("fifo_vid", fifo_vid, 0x0403);
-    n.param("fifo_pid", fifo_pid, 0x6001);
+    n.param("fifo_pid", fifo_pid, 0x6999);
     n.param("ROS_loop_rate_Hz", ROS_loop_rate_Hz, 20.0);
 
  /*   n.param<std::string>("parent_link", parent_link_str, "base_link");
@@ -68,6 +69,7 @@ int main(int argc, char **argv)
     if (f < 0 && f != -5)
     {
         ROS_ERROR( "unable to open ftdi device: %d (%s)\n", f, ftdi_get_error_string(ftdi));
+        ROS_ERROR( "VID: %04X PID: %04X\n", fifo_vid, fifo_pid);
         retval = 1;
         return EXIT_FAILURE;
     }
@@ -104,8 +106,9 @@ int main(int argc, char **argv)
     }
 
 // Exit ROS loopc, clean up
-    ROS_INFO("Closing FTDI!\n");
-
+    ROS_INFO("Closing FTDI FIFO!\n");
+    printf("\nExit.... Closing FTDI FIFO!....\r\n");
+    
     ftdi_usb_close(ftdi);
 done:
     ftdi_free(ftdi);
