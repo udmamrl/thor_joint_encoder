@@ -20,7 +20,8 @@
 
 // ROS stuff
 #include <ros/ros.h>
-
+#include <sensor_msgs/JointState.h>
+#include <tf/transform_broadcaster.h>
 
 uint8_t GrayDecode(uint8_t gray);
 
@@ -38,7 +39,9 @@ int main(int argc, char **argv)
     int f,i, joint_position;
     unsigned char buf[1];
     int retval = 0;
-    
+    double joint_angle_rad;
+    double angle_Offset=-M_PI;
+    double angle_Scale=2.0*M_PI/256.0;
 
 
 
@@ -47,6 +50,10 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "ThorPro_joint_encoder");
     
     ros::NodeHandle n("~");
+    ros::Publisher joint_pub = n.advertise<sensor_msgs::JointState>("joint_states", 1);
+/*
+    tf::TransformBroadcaster broadcaster;
+*/
     // read parameters
     n.param("fifo_vid", fifo_vid, 0x0403);
     n.param("fifo_pid", fifo_pid, 0x6999);
@@ -62,6 +69,17 @@ int main(int argc, char **argv)
     n.param<std::string>("child_link",  child_link_str , "rear_link");
     n.param<std::string>("joint_name",  joint_name_str , "thor_joint");
 */
+
+    const double degree = M_PI/180;
+
+
+    // message declarations
+    sensor_msgs::JointState joint_state;
+/*
+    geometry_msgs::TransformStamped odom_trans;
+    odom_trans.header.frame_id = "odom";
+    odom_trans.child_frame_id = "axis";
+    */
 
 
 
@@ -103,10 +121,35 @@ int main(int argc, char **argv)
         {
             ROS_INFO("FIFO read data: 0x%02hhx \n",buf[0]);
             joint_position=GrayDecode(buf[0]) ;
-            ROS_INFO("FIFO joint position: %d \n",joint_position);
+            joint_angle_rad=angle_Scale*joint_position+angle_Offset;
+            ROS_INFO("FIFO joint position: %8.3f rad \n",joint_angle_rad);
+            ROS_INFO("FIFO joint position: %8.3f degree\n",joint_angle_rad/degree);
         }
+    //
 
 
+        //update joint_state
+        joint_state.header.stamp = ros::Time::now();
+        joint_state.name.resize(1);
+        joint_state.position.resize(1);
+        joint_state.name[0] ="swivel";
+        joint_state.position[0] = joint_angle_rad;
+
+        //send the joint state and transform
+        joint_pub.publish(joint_state);
+
+        /*
+        // update transform
+        // (moving in a circle with radius=2)
+        odom_trans.header.stamp = ros::Time::now();
+        odom_trans.transform.translation.x = 0;
+        odom_trans.transform.translation.y = 0;
+        odom_trans.transform.translation.z = 0;
+        odom_trans.transform.rotation = tf::createQuaternionMsgFromYaw(angle+M_PI/2);
+
+
+        broadcaster.sendTransform(odom_trans);
+        */
 
 
 
