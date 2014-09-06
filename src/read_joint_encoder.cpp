@@ -42,8 +42,8 @@ int main(int argc, char **argv)
     double joint_angle_rad;
     double angle_Offset=-M_PI;
     double angle_Scale=2.0*M_PI/256.0;
-
-
+    int MaxErrors = 10;
+    int ErrorCounter =0;
 
 
     // setup ROS parameter here
@@ -115,6 +115,13 @@ int main(int argc, char **argv)
         if (f < 0)
         {
             ROS_ERROR("FIFO read failed , error %d (%s)\n",f, ftdi_get_error_string(ftdi));
+            ErrorCounter++;
+            if (ErrorCounter>MaxErrors)
+            { // if too much back to back errors
+              // quit ROS try again
+              ROS_ERROR("FIFO read failed %d times! Shutdown node! \n",MaxErrors);
+              ros::shutdown();
+            }
         }
         else
         {
@@ -123,6 +130,7 @@ int main(int argc, char **argv)
             joint_angle_rad=angle_Scale*joint_position+angle_Offset;
             //ROS_INFO("FIFO joint position: %8.3f rad \n",joint_angle_rad);
             //ROS_INFO("FIFO joint position: %8.3f degree\n",joint_angle_rad/degree);
+            ErrorCounter=0;
         }
     //
 
