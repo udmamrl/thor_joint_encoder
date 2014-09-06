@@ -1,0 +1,4 @@
+<launch>
+  <node pkg="thor_joint_encoder" type="read_joint_encoder" name="joint_encoder" output="screen" respawn="true">
+  </node>
+ </launch>

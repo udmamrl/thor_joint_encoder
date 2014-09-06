@@ -85,7 +85,7 @@ int main(int argc, char **argv)
 // setup FIFO
     if ((ftdi = ftdi_new()) == 0)
     {
-        ROS_ERROR( "ftdi_new failed\n");
+        ROS_ERROR( "Thor Joint Encoder, ftdi_new failed\n");
         return EXIT_FAILURE;
     }
 
@@ -93,20 +93,20 @@ int main(int argc, char **argv)
 
     if (f < 0 && f != -5)
     {
-        ROS_ERROR( "unable to open ftdi device: %d (%s)\n", f, ftdi_get_error_string(ftdi));
+        ROS_ERROR( "Thor Joint Encoder, unable to open FTDI FIFO device: %d (%s)\n", f, ftdi_get_error_string(ftdi));
         ROS_ERROR( "VID: %04X PID: %04X\n", fifo_vid, fifo_pid);
         retval = 1;
         return EXIT_FAILURE;
     }
 
-    ROS_INFO("FTDI FIFO open succeeded: %d\n",f);
+    ROS_INFO("Thor Joint Encoder FIFO open succeeded! Code: %d\n",f);
 
 
 
 
 // enter ROS loop
     ros::Rate loop_rate(ROS_loop_rate_Hz);
-    ROS_INFO("ROS FIFO Reading Loop Start!");
+    ROS_INFO("Thor Joint Encoder FIFO Reading Loop Start!");
     while(ros::ok())
     {
 
@@ -114,12 +114,12 @@ int main(int argc, char **argv)
         f = ftdi_read_pins(ftdi, buf);
         if (f < 0)
         {
-            ROS_ERROR("FIFO read failed , error %d (%s)\n",f, ftdi_get_error_string(ftdi));
+            ROS_ERROR("Thor Joint Encoder FIFO read failed , error %d (%s)\n",f, ftdi_get_error_string(ftdi));
             ErrorCounter++;
             if (ErrorCounter>MaxErrors)
             { // if too much back to back errors
               // quit ROS try again
-              ROS_ERROR("FIFO read failed %d times! Shutdown node! \n",MaxErrors);
+              ROS_ERROR("Thor Joint Encoder FIFO read failed %d times! Shutdown node! \n",MaxErrors);
               ros::shutdown();
             }
         }
@@ -139,7 +139,7 @@ int main(int argc, char **argv)
         joint_state.header.stamp = ros::Time::now();
         joint_state.name.resize(1);
         joint_state.position.resize(1);
-        joint_state.name[0] ="swivel";
+        joint_state.name[0] ="joint_angle";
         joint_state.position[0] = joint_angle_rad;
 
         //send the joint state and transform
@@ -164,8 +164,8 @@ int main(int argc, char **argv)
     }
 
 // Exit ROS loopc, clean up
-    ROS_INFO("Closing FTDI FIFO!\n");
-    printf("\nExit.... Closing FTDI FIFO!....\r\n");
+    ROS_INFO("Thor Joint Encoder, Closing FTDI FIFO!\n");
+    printf("\nExit.... Closing Thor Joint Encoder FTDI FIFO!....\r\n");
     
     ftdi_usb_close(ftdi);
 done:
