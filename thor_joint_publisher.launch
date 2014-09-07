@@ -1,4 +1,9 @@
 <launch>
+	<param name="robot_description" textfile="$(find thor_joint_encoder)/urdf/ThorPro_dae.urdf" />
   <node pkg="thor_joint_encoder" type="read_joint_encoder" name="joint_encoder" output="screen" respawn="true">
   </node>
+  <!-- Diaplay Robot with RVIZ
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find urdf_tutorial)/urdf.rviz" required="true" />
+  -->
  </launch>
+
