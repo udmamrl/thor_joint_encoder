@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<robot name="flexible">
+  <link name="base_link">
+    <visual>
+      <geometry>
+       <box size=".4 .6 .4"/>
+      </geometry>
+      <material name="blue">
+        <color rgba="0 0 .8 1"/>
+      </material>
+    </visual>
+  </link>
+  <joint name="joint_angle" type="continuous">
+    <parent link="base_link"/>
+    <child link="rear_link"/>
+    <axis xyz="0 0 1"/>
+    <origin xyz="0 0 0.3"/>
+  </joint>
+
+  
+  <link name="rear_link">
+    <visual>
+      <geometry>
+        <box size=".4 .08 .08"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="-.2 0 .2"/>
+      <material name="white"/>
+    </visual>
+  </link>
+
+</robot>
+

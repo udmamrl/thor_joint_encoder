@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<robot name="flexible">
+  <link name="base_link">
+    <visual>
+      <geometry>
+       <mesh filename="package://thor_joint_encoder/urdf/ThorPro_Front.dae"/>
+      </geometry>
+    </visual>
+  </link>
+  <joint name="joint_angle" type="continuous">
+    <parent link="base_link"/>
+    <child link="rear_link"/>
+    <axis xyz="0 0 1"/>
+    <origin xyz="0 0 0.3"/>
+  </joint>
+
+  
+  <link name="rear_link">
+    <visual>
+      <geometry>
+        <mesh filename="package://thor_joint_encoder/urdf/ThorPro_Rear.dae"/>
+      </geometry>
+    </visual>
+  </link>
+
+</robot>
+

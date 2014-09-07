@@ -51,9 +51,9 @@ int main(int argc, char **argv)
     
     ros::NodeHandle n("~");
     ros::Publisher joint_pub = n.advertise<sensor_msgs::JointState>("/joint_states", 1);
-/*
+
     tf::TransformBroadcaster broadcaster;
-*/
+
     // read parameters
     n.param("fifo_vid", fifo_vid, 0x0403);
     n.param("fifo_pid", fifo_pid, 0x6999);
@@ -64,21 +64,30 @@ int main(int argc, char **argv)
    reference:http://wiki.ros.org/joint_state_publisher
    example code :https://github.com/ros/robot_model/blob/indigo-devel/joint_state_publisher/joint_state_publisher/joint_state_publisher
 */
-/*
+
     n.param<std::string>("parent_link", parent_link_str, "base_link");
     n.param<std::string>("child_link",  child_link_str , "rear_link");
     n.param<std::string>("joint_name",  joint_name_str , "thor_joint");
-*/
+
 
 
 
     // message declarations
     sensor_msgs::JointState joint_state;
-/*
-    geometry_msgs::TransformStamped odom_trans;
-    odom_trans.header.frame_id = "odom";
-    odom_trans.child_frame_id = "axis";
-    */
+    joint_state.name.resize(1);
+    joint_state.position.resize(1);
+    joint_state.effort.resize(1);
+    joint_state.velocity.resize(1);
+    joint_state.name[0] =joint_name_str;
+    joint_state.effort[0]=0;
+    joint_state.velocity[0]=0;
+
+    geometry_msgs::TransformStamped joint_trans;
+    joint_trans.header.frame_id = parent_link_str;
+    joint_trans.child_frame_id = child_link_str;
+    joint_trans.transform.translation.x = 0;
+    joint_trans.transform.translation.y = 0;
+    joint_trans.transform.translation.z = 0;
 
 
 
@@ -137,26 +146,19 @@ int main(int argc, char **argv)
 
         //update joint_state
         joint_state.header.stamp = ros::Time::now();
-        joint_state.name.resize(1);
-        joint_state.position.resize(1);
-        joint_state.name[0] ="joint_angle";
         joint_state.position[0] = joint_angle_rad;
 
-        //send the joint state and transform
         joint_pub.publish(joint_state);
 
-        /*
+
         // update transform
-        // (moving in a circle with radius=2)
-        odom_trans.header.stamp = ros::Time::now();
-        odom_trans.transform.translation.x = 0;
-        odom_trans.transform.translation.y = 0;
-        odom_trans.transform.translation.z = 0;
-        odom_trans.transform.rotation = tf::createQuaternionMsgFromYaw(angle+M_PI/2);
+        //
+        joint_trans.header.stamp = ros::Time::now();
+        joint_trans.transform.rotation = tf::createQuaternionMsgFromYaw(joint_angle_rad);
 
 
-        broadcaster.sendTransform(odom_trans);
-        */
+        broadcaster.sendTransform(joint_trans);
+
 
 
 
