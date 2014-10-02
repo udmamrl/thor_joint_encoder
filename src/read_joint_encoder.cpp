@@ -40,8 +40,8 @@ int main(int argc, char **argv)
     unsigned char buf[1];
     int retval = 0;
     double joint_angle_rad;
-    double angle_Offset=-M_PI;
-    double angle_Scale=2.0*M_PI/256.0;
+    double angle_Offset;
+    double angle_Scale;
     int MaxErrors = 10;
     int ErrorCounter =0;
 
@@ -58,6 +58,8 @@ int main(int argc, char **argv)
     n.param("fifo_vid", fifo_vid, 0x0403);
     n.param("fifo_pid", fifo_pid, 0x6999);
     n.param("ROS_loop_rate_Hz", ROS_loop_rate_Hz, 20.0);
+    n.param("angle_Offset", angle_Offset, -M_PI*1.25);
+    n.param("angle_Scale", angle_Scale, 2.0*M_PI/256.0);
 
  /*
    TODO : set up jointstate publisher , joint_states (sensor_msgs/JointState) 
